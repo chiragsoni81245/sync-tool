@@ -13,7 +13,7 @@ A production-ready Go CLI that automatically syncs local directories to GitHub r
 - Modular, production-grade architecture
 - SQLite database to track sync metadata
 - Structured logging (zap)
-- Configurable via YAML + env vars
+- Configurable via YAML
 
 ---
 
@@ -36,8 +36,6 @@ cron_schedule: "*/15 * * * *"
 github_username: "username"
 github_token: "ghp_..."
 ```
-
-Or set `SYNC_GITHUB_TOKEN` as an environment variable.
 
 ### 3. Use CLI
 
