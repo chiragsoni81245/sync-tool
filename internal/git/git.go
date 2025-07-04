@@ -32,8 +32,8 @@ func InitGitRepo(path string) error {
 
 func ConfigureGit(path string) error {
     commands := [][]string{
-        {"config", "--local", "user.email", config.App.GithubEmail},
-        {"config", "--local", "user.name", config.App.GitHubUsername},
+        {"config", "user.email", config.App.GithubEmail},
+        {"config", "user.name", config.App.GitHubUsername},
     }
     for _, args := range commands {
         cmd := exec.Command("git", args...)
