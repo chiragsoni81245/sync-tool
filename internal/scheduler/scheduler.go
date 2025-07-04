@@ -31,6 +31,7 @@ func Start() {
 	}
 
 	c.Start()
+    logger.Log.Infof("Started cron scheduler")
 	select {} // Block forever
 }
 
