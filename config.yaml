@@ -1,0 +1,7 @@
+# config.yaml
+
+# Cron pattern (runs every 15 minutes)
+cron_schedule: "*/15 * * * *"
+
+# Personal access token or GitHub App token
+github_token: "ghp_your_github_token_here"
