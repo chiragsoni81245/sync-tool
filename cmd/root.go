@@ -10,6 +10,8 @@ import (
 	"sync-tool/internal/logger"
 )
 
+var configPath string
+var dbPath string
 var rootCmd = &cobra.Command{
 	Use:   "sync-tool",
 	Short: "A CLI tool to sync local directories with GitHub repos",
@@ -25,11 +27,15 @@ func Execute() {
 
 func initApp() {
 	logger.InitLogger()
-	config.LoadConfig("config.yaml")
-	db.InitDB("data/sync.db")
+	config.LoadConfig(configPath)
+	db.InitDB(dbPath)
 }
 
 func init() {
+    rootCmd.PersistentFlags().StringVar(&configPath, "config", "", "Path to config file")
+    rootCmd.MarkPersistentFlagRequired("config")
+    rootCmd.PersistentFlags().StringVar(&dbPath, "db-path", "", "Path to database file")
+    rootCmd.MarkPersistentFlagRequired("db-path")
 	rootCmd.AddCommand(addCmd)
 	rootCmd.AddCommand(startCmd)
 	rootCmd.AddCommand(listCmd)
