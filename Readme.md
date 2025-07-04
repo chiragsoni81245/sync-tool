@@ -35,6 +35,7 @@ Create `config.yaml`:
 cron_schedule: "*/15 * * * *"
 github_username: "username"
 github_token: "ghp_..."
+github_email: "email"
 ```
 
 ### 3. Use CLI

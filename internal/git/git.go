@@ -30,6 +30,23 @@ func InitGitRepo(path string) error {
 	return nil
 }
 
+func ConfigureGit(path string) error {
+    commands := [][]string{
+        {"config", "--local", "user.email", config.App.GithubEmail},
+        {"config", "--local", "user.name", config.App.GitHubUsername},
+    }
+    for _, args := range commands {
+        cmd := exec.Command("git", args...)
+        cmd.Dir = path
+        if out, err := cmd.CombinedOutput(); err != nil {
+            return fmt.Errorf("git %v failed: %v\n%s", args, err, out)
+        }
+    }
+
+    logger.Log.Infof("Configured bot identity in git repo at %s", path)
+	return nil
+}
+
 func SetRemote(path, remoteURL string) error {
     remoteName := "github-auto-sync"
 	cmd := exec.Command("git", "remote", "remove", remoteName)
@@ -59,7 +76,7 @@ func CommitAndPush(path string) error {
     remoteName := "github-auto-sync"
 	commands := [][]string{
 		{"add", "-A"},
-		{"commit", "-m", "Auto sync"},
+		{"commit", "-m", "\"Auto sync\""},
 		{"branch", "-M", "main"},
 		{"push", "-u", remoteName, "main"},
 	}

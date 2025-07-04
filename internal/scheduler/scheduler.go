@@ -46,6 +46,13 @@ func syncOne(target db.SyncTarget) {
 		return
 	}
 
+	if err := git.ConfigureGit(target.Path); err != nil {
+		target.LastSyncStatus = db.StatusFailed
+		target.StatusMessage = "Git init error: " + err.Error()
+		save(&target)
+		return
+	}
+
 	if err := git.SetRemote(target.Path, target.RepoURL); err != nil {
 		target.LastSyncStatus = db.StatusFailed
 		target.StatusMessage = "Set remote error: " + err.Error()

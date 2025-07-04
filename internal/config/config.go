@@ -8,9 +8,10 @@ import (
 )
 
 type AppConfig struct {
-	CronSchedule string `mapstructure:"cron_schedule"`
-	GitHubToken  string `mapstructure:"github_token"`
-	GitHubUsername  string `mapstructure:"github_username"`
+    CronSchedule   string `mapstructure:"cron_schedule"`
+    GitHubToken    string `mapstructure:"github_token"`
+    GitHubUsername string `mapstructure:"github_username"`
+    GithubEmail    string `mapstructure:"github_email"`
 }
 
 var App AppConfig
