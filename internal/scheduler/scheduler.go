@@ -57,12 +57,16 @@ func syncOne(target db.SyncTarget) {
 		target.LastSyncStatus = db.StatusFailed
 		target.StatusMessage = "Push error: " + err.Error()
 		save(&target)
+
+        // If commit is not successful delete the remote
+        if err := git.DeleteRemote(target.Path, target.RepoURL); err != nil {
+            save(&target)
+            return
+        }
 		return
 	}
 
 	if err := git.DeleteRemote(target.Path, target.RepoURL); err != nil {
-		target.LastSyncStatus = db.StatusFailed
-		target.StatusMessage = "Set remote error: " + err.Error()
 		save(&target)
 		return
 	}
