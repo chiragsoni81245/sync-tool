@@ -5,6 +5,7 @@ A production-ready Go CLI that automatically syncs local directories to GitHub r
 ---
 
 ## ✨ Features
+
 - Background cron scheduler for auto-sync
 - CLI to add and manage directories
 - Git initialization and remote setup
@@ -19,6 +20,7 @@ A production-ready Go CLI that automatically syncs local directories to GitHub r
 ## 🛠️ Setup
 
 ### 1. Install
+
 ```bash
 git clone https://github.com/your-org/sync-tool.git
 cd sync-tool
@@ -26,15 +28,19 @@ go build -o sync-tool
 ```
 
 ### 2. Configure
+
 Create `config.yaml`:
+
 ```yaml
 cron_schedule: "*/15 * * * *"
+github_username: "username"
 github_token: "ghp_..."
 ```
 
 Or set `SYNC_GITHUB_TOKEN` as an environment variable.
 
 ### 3. Use CLI
+
 ```bash
 ./sync-tool add     # Add directory to watch
 ./sync-tool list    # List current sync targets
@@ -42,6 +48,7 @@ Or set `SYNC_GITHUB_TOKEN` as an environment variable.
 ```
 
 ### 4. (Optional) Run as Service
+
 ```ini
 # /etc/systemd/system/sync-tool.service
 [Unit]
@@ -49,9 +56,8 @@ Description=Sync Tool GitHub Directory Sync Service
 After=network.target
 
 [Service]
-ExecStart=/usr/local/bin/sync-tool start
+ExecStart=/usr/local/bin/sync-tool start --config <path-to-config> --db-path <path-to-db-file>
 Restart=on-failure
-Environment=SYNC_GITHUB_TOKEN=ghp_...
 WorkingDirectory=/home/ubuntu/sync-tool
 
 [Install]
@@ -66,6 +72,7 @@ sudo systemctl start sync-tool
 ---
 
 ## 📁 Architecture
+
 ```
 .
 ├── cmd             # CLI commands
@@ -81,14 +88,6 @@ sudo systemctl start sync-tool
 
 ---
 
-## 📌 Roadmap Ideas
-- GitHub repo auto-creation if missing
-- REST API server mode
-- Web UI frontend
-- Webhooks or file watchers
-
----
-
 ## 👨‍💻 Author
-Chirag Soni · Built with Go + ❤️
 
+Chirag Soni · Built with Go + ❤️

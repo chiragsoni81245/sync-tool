@@ -7,7 +7,15 @@ import (
 	"os/exec"
 	"strings"
 	"sync-tool/internal/logger"
+    "sync-tool/internal/config"
 )
+
+func buildAuthenticatedURL(repoURL string) string {
+    return strings.Replace(repoURL, "https://github.com/", 
+        fmt.Sprintf("https://%s:%s@github.com/", config.App.GitHubUsername, config.App.GitHubToken),
+        1,
+    )
+}
 
 func InitGitRepo(path string) error {
 	// Check if .git exists
@@ -28,12 +36,22 @@ func SetRemote(path, remoteURL string) error {
 	cmd.Dir = path
 	cmd.Run() // ignore error if no remote exists
 
-	cmd = exec.Command("git", "remote", "add", remoteName, remoteURL)
+	cmd = exec.Command("git", "remote", "add", remoteName, buildAuthenticatedURL(remoteURL))
 	cmd.Dir = path
 	if out, err := cmd.CombinedOutput(); err != nil {
 		return fmt.Errorf("git remote add failed: %v\n%s", err, out)
 	}
 	logger.Log.Infof("Set remote %s: %s", remoteName, remoteURL)
+	return nil
+}
+
+func DeleteRemote(path, remoteURL string) error {
+    remoteName := "github-auto-sync"
+	cmd := exec.Command("git", "remote", "remove", remoteName)
+	cmd.Dir = path
+	cmd.Run() // ignore error if no remote exists
+
+	logger.Log.Infof("Deleted remote %s: %s", remoteName, remoteURL)
 	return nil
 }
 

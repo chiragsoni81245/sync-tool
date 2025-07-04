@@ -3,5 +3,6 @@
 # Cron pattern (runs every 15 minutes)
 cron_schedule: "*/15 * * * *"
 
-# Personal access token or GitHub App token
+#  GitHub Credentials
+github_username: chiragsoni81245
 github_token: "ghp_your_github_token_here"

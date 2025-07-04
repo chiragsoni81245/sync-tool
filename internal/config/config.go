@@ -3,7 +3,6 @@ package config
 
 import (
 	"log"
-	"os"
 
 	"github.com/spf13/viper"
 )
@@ -11,14 +10,13 @@ import (
 type AppConfig struct {
 	CronSchedule string `mapstructure:"cron_schedule"`
 	GitHubToken  string `mapstructure:"github_token"`
+	GitHubUsername  string `mapstructure:"github_username"`
 }
 
 var App AppConfig
 
 func LoadConfig(path string) {
 	viper.SetConfigFile(path)
-	viper.SetEnvPrefix("SYNC")
-	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err != nil {
 		log.Fatalf("Failed to read config: %v", err)
@@ -28,9 +26,5 @@ func LoadConfig(path string) {
 		log.Fatalf("Failed to unmarshal config: %v", err)
 	}
 
-	// fallback to env variables
-	if token := os.Getenv("SYNC_GITHUB_TOKEN"); token != "" {
-		App.GitHubToken = token
-	}
 }
 
