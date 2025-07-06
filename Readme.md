@@ -9,7 +9,6 @@ A production-ready Go CLI that automatically syncs local directories to GitHub r
 - Background cron scheduler for auto-sync
 - CLI to add and manage directories
 - Git initialization and remote setup
-- GitHub repo creation-ready (hook to extend)
 - Modular, production-grade architecture
 - SQLite database to track sync metadata
 - Structured logging (zap)
@@ -33,6 +32,7 @@ Create `config.yaml`:
 
 ```yaml
 cron_schedule: "*/15 * * * *"
+database_filepath: "data/data.db"
 github_username: "username"
 github_token: "ghp_..."
 github_email: "email"
@@ -41,9 +41,9 @@ github_email: "email"
 ### 3. Use CLI
 
 ```bash
-./sync-tool add <provider> <push/pull>   # Add directory to watch so that it can synced with given provider
-./sync-tool list                    # List current sync targets
-./sync-tool start                   # Start the background sync service
+./sync-tool add --provider "github/gdrive" --mode "push/pull" --folder <local-directory> --remote <remote-url>  # Add directory to watch so that it can synced with given provider
+./sync-tool list                                                                                                # List current sync targets
+./sync-tool start                                                                                               # Start the background sync service
 ```
 
 ### 4. (Optional) Run as Service
@@ -55,7 +55,7 @@ Description=Sync Tool GitHub Directory Sync Service
 After=network.target
 
 [Service]
-ExecStart=/usr/local/bin/sync-tool start --config <path-to-config> --db-path <path-to-db-file>
+ExecStart=/usr/local/bin/sync-tool start --config <path-to-config>
 Restart=on-failure
 WorkingDirectory=/home/ubuntu/sync-tool
 
