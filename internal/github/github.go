@@ -20,6 +20,7 @@ func New() *Github{
 }
 
 func (p *Github) PullSync(target db.SyncTarget) error {
+    logger.Log.Infof("Pull operation for Github provider is not built yet!")
     return nil
 }
 

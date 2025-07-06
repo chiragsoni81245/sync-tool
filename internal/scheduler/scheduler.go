@@ -2,12 +2,14 @@
 package scheduler
 
 import (
-	"github.com/robfig/cron/v3"
 	"sync-tool/internal/config"
 	"sync-tool/internal/db"
-	"sync-tool/internal/provider"
+	"sync-tool/internal/gdrive"
 	"sync-tool/internal/github"
 	"sync-tool/internal/logger"
+	"sync-tool/internal/provider"
+
+	"github.com/robfig/cron/v3"
 )
 
 func Start() {
@@ -37,6 +39,7 @@ func Start() {
 func syncOne(target db.SyncTarget) {
     providers := map[string]provider.Provider{
         string(db.ProviderGitHub): github.New(),
+        string(db.ProviderGDrive): gdrive.New(),
     }
 
     provider := providers[string(target.Provider)]
