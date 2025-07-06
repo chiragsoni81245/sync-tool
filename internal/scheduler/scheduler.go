@@ -17,13 +17,21 @@ func Start() {
 	_, err := c.AddFunc(config.App.CronSchedule, func() {
 		logger.Log.Infof("Running scheduled sync job")
 
-		var targets []db.SyncTarget
-		if err := db.DB.Find(&targets).Error; err != nil {
-			logger.Log.Errorf("failed to fetch sync targets: %v", err)
+		var pullSyncTargets []db.SyncTarget
+		if err := db.DB.Where("mode = ?", db.ModePull).Find(&pullSyncTargets).Error; err != nil {
+			logger.Log.Errorf("failed to fetch pull sync targets: %v", err)
 			return
 		}
+		for _, target := range pullSyncTargets {
+			syncOne(target)
+		}
 
-		for _, target := range targets {
+		var pushSyncTargets []db.SyncTarget
+		if err := db.DB.Where("mode = ?", db.ModePush).Find(&pushSyncTargets).Error; err != nil {
+			logger.Log.Errorf("failed to fetch push sync targets: %v", err)
+			return
+		}
+		for _, target := range pushSyncTargets {
 			syncOne(target)
 		}
 	})
