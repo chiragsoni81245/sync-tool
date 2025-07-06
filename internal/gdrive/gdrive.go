@@ -133,7 +133,7 @@ func downloadFolder(srv *drive.Service, folderID, destPath string) error {
 			if err != nil {
                 return err
 			}
-		} else if f.MimeType[:20] == "application/vnd.google" {
+		} else if len(f.MimeType) >= 20 && f.MimeType[:20] == "application/vnd.google" {
 			fmt.Printf("Skipping Google Doc: %s\n", f.Name)
 		} else {
 			err := downloadFile(srv, f, destPath)
