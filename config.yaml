@@ -1,10 +1,15 @@
 # config.yaml
 
-# Cron pattern (runs every 15 minutes)
-cron_schedule: "*/15 * * * *"
+# Cron pattern (runs every minutes)
+cron_schedule: "* * * * *"
+
+# Database Configuration
+database_filepath: "data/data.db"
 
 #  GitHub Credentials
-github_username: chiragsoni81245
-github_token: "ghp_your_github_token_here"
-github_email: "email"
-database_filepath: "data/data.db"
+github_username: github_username
+github_token: "github_pat_token"
+github_email: "xyz@gmail.com"
+
+# Google Drive Credentials
+google_drive_credentials_filepath: "google-drive-credentials.json"
