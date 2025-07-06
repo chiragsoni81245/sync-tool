@@ -28,15 +28,7 @@ go build -o sync-tool
 
 ### 2. Configure
 
-Create `config.yaml`:
-
-```yaml
-cron_schedule: "*/15 * * * *"
-database_filepath: "data/data.db"
-github_username: "username"
-github_token: "ghp_..."
-github_email: "email"
-```
+Create a base config file referring the config template provided in the `config.yaml` file
 
 ### 3. Use CLI
 
