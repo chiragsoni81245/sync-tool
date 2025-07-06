@@ -15,7 +15,7 @@ var addCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
         provider, _ := cmd.Flags().GetString("provider")
         mode, _ := cmd.Flags().GetString("mode")
-        localDirectory, _ := cmd.Flags().GetString("folder")
+        localDirectory, _ := cmd.Flags().GetString("local")
         remoteRef, _ := cmd.Flags().GetString("remote-url")
 
         if !slices.Contains([]db.SyncMode{db.ModePull, db.ModePush}, db.SyncMode(mode)) {
