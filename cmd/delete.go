@@ -22,6 +22,7 @@ var deleteCmd = &cobra.Command{
 		var target db.SyncTarget
         db.DB.Where("id = ?", id).First(&target)
         db.DB.Delete(target)
+        log.Printf("Target with id %d deleted successfully", id)
 	},
 }
 
