@@ -37,6 +37,7 @@ func init() {
     rootCmd.PersistentFlags().StringVar(&configPath, "config", "", "Path to config file")
     rootCmd.MarkPersistentFlagRequired("config")
     rootCmd.AddCommand(addCmd)
+    rootCmd.AddCommand(deleteCmd)
 	rootCmd.AddCommand(startCmd)
 	rootCmd.AddCommand(listCmd)
 }
