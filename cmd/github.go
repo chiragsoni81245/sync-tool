@@ -1,4 +1,4 @@
-// cmd/add.go
+// cmd/github.go
 package cmd
 
 import (
@@ -12,9 +12,15 @@ import (
 	"sync-tool/internal/logger"
 )
 
-var addCmd = &cobra.Command{
-	Use:   "add",
-	Short: "Add a directory to be synced with a GitHub repo",
+
+var githubCmd = &cobra.Command{
+	Use:   "github",
+	Short: "This github command will allow user to do push sync to a github repo",
+}
+
+var githubPushCmd = &cobra.Command{
+	Use:   "push",
+	Short: "Add a directory to be synced with a GitHub repo via pushing new changes to github",
 	Run: func(cmd *cobra.Command, args []string) {
 		r := bufio.NewReader(os.Stdin)
 		fmt.Print("Enter local directory path: ")
@@ -31,13 +37,15 @@ var addCmd = &cobra.Command{
 		}
 
 		// Save to DB
-		syncTarget := db.SyncTarget{
-			Path:           dirPath,
-			RepoURL:        repoURL,
-			LastSyncStatus: db.StatusPending,
-			StatusMessage:  "Waiting for first sync",
-			LastSyncedAt:   nil,
-		}
+        syncTarget := db.SyncTarget{
+            Mode:           db.ModePush,
+            Provider:       db.ProviderGitHub,
+            LocalPath:      dirPath,
+            RemoteRef:      repoURL,
+            LastSyncStatus: db.StatusPending,
+            StatusMessage:  "Waiting for first sync",
+            LastSyncedAt:   nil,
+        }
 
 		if err := db.DB.Create(&syncTarget).Error; err != nil {
 			logger.Log.Errorf("Failed to save sync target: %v", err)
@@ -48,3 +56,7 @@ var addCmd = &cobra.Command{
 	},
 }
 
+
+func init() {
+	githubCmd.AddCommand(githubPushCmd)
+}

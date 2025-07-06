@@ -36,7 +36,7 @@ func init() {
     rootCmd.MarkPersistentFlagRequired("config")
     rootCmd.PersistentFlags().StringVar(&dbPath, "db-path", "", "Path to database file")
     rootCmd.MarkPersistentFlagRequired("db-path")
-	rootCmd.AddCommand(addCmd)
+    rootCmd.AddCommand(githubCmd)
 	rootCmd.AddCommand(startCmd)
 	rootCmd.AddCommand(listCmd)
 }

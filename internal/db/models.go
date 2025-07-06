@@ -9,12 +9,6 @@ import (
 	"gorm.io/gorm"
 )
 
-const (
-	StatusSuccess = "success"
-	StatusFailed  = "failed"
-	StatusPending = "pending"
-)
-
 var DB *gorm.DB
 
 func InitDB(path string) {
@@ -30,15 +24,40 @@ func InitDB(path string) {
 	}
 }
 
-type SyncTarget struct {
-	ID              uint           `gorm:"primaryKey"`
-	Path            string         `gorm:"unique;not null"` // Local directory path
-	RepoURL         string         `gorm:"not null"`         // GitHub repository URL
-	LastSyncedAt    *time.Time
-	LastSyncStatus  string         `gorm:"not null"`         // One of: "success", "failed", "pending"
-	StatusMessage   string         `gorm:"type:text"`        // e.g. "Sync successful" or error message
-	CreatedAt       time.Time
-	UpdatedAt       time.Time
-	DeletedAt       gorm.DeletedAt `gorm:"index"`
+func Save(t *SyncTarget) {
+	if err := DB.Save(t).Error; err != nil {
+		logger.Log.Errorf("Failed to update sync target: %v", err)
+	}
 }
 
+type SyncMode string
+const (
+    ModePush SyncMode = "push"
+    ModePull SyncMode = "pull"
+)
+
+type SyncProvider string
+const (
+    ProviderGitHub SyncProvider = "github"
+    ProviderGDrive SyncProvider = "gdrive"
+)
+
+type SyncStatus string
+const (
+    StatusPending SyncStatus = "pending"
+    StatusSuccess SyncStatus = "success"
+    StatusFailed  SyncStatus = "failed"
+)
+
+type SyncTarget struct {
+    ID             uint           `gorm:"primarykey"`
+    Mode           SyncMode       `gorm:"index"`        // push or pull
+    Provider       SyncProvider   `gorm:"index"`        // github or gdrive
+    LocalPath      string
+    RemoteRef      string         // repo URL or gdrive folder id
+    LastSyncedAt   *time.Time
+    LastSyncStatus SyncStatus
+    StatusMessage  string
+    CreatedAt      time.Time
+    UpdatedAt      time.Time
+}

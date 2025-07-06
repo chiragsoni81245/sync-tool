@@ -41,9 +41,9 @@ github_email: "email"
 ### 3. Use CLI
 
 ```bash
-./sync-tool add     # Add directory to watch
-./sync-tool list    # List current sync targets
-./sync-tool start   # Start the background sync service
+./sync-tool add <provider> <push/pull>   # Add directory to watch so that it can synced with given provider
+./sync-tool list                    # List current sync targets
+./sync-tool start                   # Start the background sync service
 ```
 
 ### 4. (Optional) Run as Service
@@ -78,7 +78,7 @@ sudo systemctl start sync-tool
 ├── internal
 │   ├── config      # Config loader (yaml + env)
 │   ├── db          # SQLite models + GORM
-│   ├── git         # Git operations
+│   ├── github      # Github operations
 │   ├── logger      # Structured zap logger
 │   └── scheduler   # Cron-based sync engine
 ├── config.yaml     # App config

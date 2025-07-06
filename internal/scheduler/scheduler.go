@@ -2,12 +2,11 @@
 package scheduler
 
 import (
-	"time"
-
 	"github.com/robfig/cron/v3"
 	"sync-tool/internal/config"
 	"sync-tool/internal/db"
-	"sync-tool/internal/git"
+	"sync-tool/internal/provider"
+	"sync-tool/internal/github"
 	"sync-tool/internal/logger"
 )
 
@@ -36,55 +35,15 @@ func Start() {
 }
 
 func syncOne(target db.SyncTarget) {
-	timeNow := time.Now()
-	target.LastSyncedAt = &timeNow
+    providers := map[string]provider.Provider{
+        string(db.ProviderGitHub): github.New(),
+    }
 
-	if err := git.InitGitRepo(target.Path); err != nil {
-		target.LastSyncStatus = db.StatusFailed
-		target.StatusMessage = "Git init error: " + err.Error()
-		save(&target)
-		return
-	}
-
-	if err := git.ConfigureGit(target.Path); err != nil {
-		target.LastSyncStatus = db.StatusFailed
-		target.StatusMessage = "Git configure error: " + err.Error()
-		save(&target)
-		return
-	}
-
-	if err := git.SetRemote(target.Path, target.RepoURL); err != nil {
-		target.LastSyncStatus = db.StatusFailed
-		target.StatusMessage = "Set remote error: " + err.Error()
-		save(&target)
-		return
-	}
-
-	if err := git.CommitAndPush(target.Path); err != nil {
-		target.LastSyncStatus = db.StatusFailed
-		target.StatusMessage = "Push error: " + err.Error()
-		save(&target)
-
-        // If commit is not successful delete the remote
-        if err := git.DeleteRemote(target.Path, target.RepoURL); err != nil {
-            return
-        }
-		return
-	}
-
-	if err := git.DeleteRemote(target.Path, target.RepoURL); err != nil {
-		save(&target)
-		return
-	}
-
-	target.LastSyncStatus = db.StatusSuccess
-	target.StatusMessage = "Sync successful"
-	save(&target)
+    provider := providers[string(target.Provider)]
+    switch target.Mode {
+    case db.ModePull: provider.PullSync(target)
+    case db.ModePush: provider.PushSync(target)
+    }
 }
 
-func save(t *db.SyncTarget) {
-	if err := db.DB.Save(t).Error; err != nil {
-		logger.Log.Errorf("Failed to update sync target: %v", err)
-	}
-}
 
