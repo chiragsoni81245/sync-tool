@@ -59,5 +59,4 @@ type SyncTarget struct {
     LastSyncStatus SyncStatus
     StatusMessage  string
     CreatedAt      time.Time
-    UpdatedAt      time.Time
 }
