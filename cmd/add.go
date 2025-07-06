@@ -16,7 +16,7 @@ var addCmd = &cobra.Command{
         provider, _ := cmd.Flags().GetString("provider")
         mode, _ := cmd.Flags().GetString("mode")
         localDirectory, _ := cmd.Flags().GetString("local")
-        remoteRef, _ := cmd.Flags().GetString("remote-url")
+        remoteRef, _ := cmd.Flags().GetString("remote")
 
         if !slices.Contains([]db.SyncMode{db.ModePull, db.ModePush}, db.SyncMode(mode)) {
             log.Fatalf("invalid mode flag")
