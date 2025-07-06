@@ -9,6 +9,7 @@ A production-ready Go CLI that automatically syncs local directories to GitHub r
 - Background cron scheduler for auto-sync
 - CLI to add and manage directories
 - Git initialization and remote setup
+- Google Drive Sync into Local folder
 - Modular, production-grade architecture
 - SQLite database to track sync metadata
 - Structured logging (zap)
