@@ -25,7 +25,19 @@ func New() *Gdrive{
     return &Gdrive{}
 }
 
-func (p *Gdrive) PullSync(target db.SyncTarget) error {
+func (p *Gdrive) Sync(target db.SyncTarget) error {
+    switch target.Mode {
+    case db.ModePull: {
+        return p.pullSync(target)
+    }
+    case db.ModePush: {
+        return p.pushSync(target)
+    }
+    default: return fmt.Errorf("Invalid mode for sync")
+    }
+}
+
+func (p *Gdrive) pullSync(target db.SyncTarget) error {
 	timeNow := time.Now()
 	target.LastSyncedAt = &timeNow
 
@@ -70,7 +82,7 @@ func (p *Gdrive) PullSync(target db.SyncTarget) error {
 	return nil
 }
 
-func (p *Gdrive) PushSync(target db.SyncTarget) error {
+func (p *Gdrive) pushSync(target db.SyncTarget) error {
     logger.Log.Infof("Push operation for Gdrive provider is not built yet!")
     return nil
 }

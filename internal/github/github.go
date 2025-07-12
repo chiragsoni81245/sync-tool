@@ -19,12 +19,24 @@ func New() *Github{
     return &Github{}
 }
 
-func (p *Github) PullSync(target db.SyncTarget) error {
+func (p *Github) Sync(target db.SyncTarget) error {
+    switch target.Mode {
+    case db.ModePull: {
+        return p.pullSync(target)
+    }
+    case db.ModePush: {
+        return p.pushSync(target)
+    }
+    default: return fmt.Errorf("Invalid mode for sync")
+    }
+}
+
+func (p *Github) pullSync(target db.SyncTarget) error {
     logger.Log.Infof("Pull operation for Github provider is not built yet!")
     return nil
 }
 
-func (p *Github) PushSync(target db.SyncTarget) error {
+func (p *Github) pushSync(target db.SyncTarget) error {
 	timeNow := time.Now()
 	target.LastSyncedAt = &timeNow
 

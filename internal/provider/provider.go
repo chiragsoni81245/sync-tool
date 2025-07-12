@@ -1,8 +1,20 @@
 package provider
 
-import "sync-tool/internal/db"
+import (
+	"fmt"
+	"sync-tool/internal/db"
+	"sync-tool/internal/gdrive"
+	"sync-tool/internal/github"
+)
 
 type Provider interface {
-    PullSync(target db.SyncTarget) error
-    PushSync(target db.SyncTarget) error
+    Sync(target db.SyncTarget) error
+}
+
+func GetProviderViaName(providerName db.SyncProvider) (Provider, error) {
+    switch providerName {
+    case db.ProviderGitHub: return github.New(), nil
+    case db.ProviderGDrive: return gdrive.New(), nil
+    }
+    return nil, fmt.Errorf("Invalid provider name")
 }

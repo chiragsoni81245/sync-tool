@@ -4,8 +4,6 @@ package scheduler
 import (
 	"sync-tool/internal/config"
 	"sync-tool/internal/db"
-	"sync-tool/internal/gdrive"
-	"sync-tool/internal/github"
 	"sync-tool/internal/logger"
 	"sync-tool/internal/provider"
 
@@ -45,16 +43,8 @@ func Start() {
 }
 
 func syncOne(target db.SyncTarget) {
-    providers := map[string]provider.Provider{
-        string(db.ProviderGitHub): github.New(),
-        string(db.ProviderGDrive): gdrive.New(),
-    }
-
-    provider := providers[string(target.Provider)]
-    switch target.Mode {
-    case db.ModePull: provider.PullSync(target)
-    case db.ModePush: provider.PushSync(target)
-    }
+    provider, _ := provider.GetProviderViaName(target.Provider)
+    provider.Sync(target)
 }
 
 

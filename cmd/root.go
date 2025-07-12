@@ -40,4 +40,5 @@ func init() {
     rootCmd.AddCommand(deleteCmd)
 	rootCmd.AddCommand(startCmd)
 	rootCmd.AddCommand(listCmd)
+    rootCmd.AddCommand(syncCmd)
 }
