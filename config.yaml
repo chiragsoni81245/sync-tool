@@ -1,10 +1,10 @@
 # config.yaml
 
-# Cron pattern (runs every minutes)
-cron_schedule: "* * * * *"
+# Cron pattern (runs every hour)
+cron_schedule: "0 * * * *"
 
 # Database Configuration
-database_filepath: "data/data.db"
+database_filepath: "/etc/sync-tool/data.db"
 
 #  GitHub Credentials
 github_username: github_username
