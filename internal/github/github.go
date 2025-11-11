@@ -43,6 +43,7 @@ func (p *Github) pushSync(target db.SyncTarget) error {
 	if err := initGitRepo(target.LocalPath); err != nil {
 		target.LastSyncStatus = db.StatusFailed
 		target.StatusMessage = "Git init error: " + err.Error()
+		logger.Log.Error(target.StatusMessage)
 		db.Save(&target)
 		return nil
 	}
@@ -50,6 +51,7 @@ func (p *Github) pushSync(target db.SyncTarget) error {
 	if err := configureGit(target.LocalPath); err != nil {
 		target.LastSyncStatus = db.StatusFailed
 		target.StatusMessage = "Git configure error: " + err.Error()
+		logger.Log.Error(target.StatusMessage)
 		db.Save(&target)
 		return nil
 	}
@@ -64,6 +66,7 @@ func (p *Github) pushSync(target db.SyncTarget) error {
 	if err := commitAndPush(target.LocalPath); err != nil {
 		target.LastSyncStatus = db.StatusFailed
 		target.StatusMessage = "Push error: " + err.Error()
+		logger.Log.Error(target.StatusMessage)
 		db.Save(&target)
 
         // If commit is not successful delete the remote
@@ -74,6 +77,7 @@ func (p *Github) pushSync(target db.SyncTarget) error {
 	}
 
 	if err := deleteRemote(target.LocalPath, target.RemoteRef); err != nil {
+		logger.Log.Error(target.StatusMessage)
 		db.Save(&target)
 		return nil
 	}
@@ -170,4 +174,3 @@ func commitAndPush(path string) error {
 	logger.Log.Infof("Pushed changes for %s", path)
 	return nil
 }
-
