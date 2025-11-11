@@ -52,6 +52,9 @@ ExecStart=/usr/local/bin/sync-tool start --config <path-to-config>
 Restart=on-failure
 WorkingDirectory=/home/ubuntu/sync-tool
 
+# Include this section if your local path exists on a different mount / disk / partition
+# BindPaths=<path-to-mount>
+
 [Install]
 WantedBy=multi-user.target
 ```
