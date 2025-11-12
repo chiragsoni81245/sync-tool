@@ -1,4 +1,4 @@
-name: Create Release (${{ github.event.inputs.version }})
+name: Create Release ${{ github.event.inputs.version }}
 
 on:
   workflow_dispatch:
