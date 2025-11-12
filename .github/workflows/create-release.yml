@@ -1,0 +1,54 @@
+name: Create Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag (e.g., v1.0.0)'
+        required: true
+        type: string
+
+jobs:
+  build-and-release:
+    name: Build & Release Go Binary
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write  # Required to push tags and create releases
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Important for tagging and version history
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Build binary
+        run: |
+          mkdir -p build
+          go mod tidy
+          go build -o build/sync-tool main.go
+
+      - name: Verify build
+        run: |
+          ls -lh build/
+
+      - name: Create Git tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag ${{ github.event.inputs.version }}
+          git push origin ${{ github.event.inputs.version }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.version }}
+          name: Release ${{ github.event.inputs.version }}
+          files: build/sync-tool
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
