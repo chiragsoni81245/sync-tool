@@ -10,9 +10,9 @@ import (
 type AppConfig struct {
     CronSchedule                   string `mapstructure:"cron_schedule"`
     DatabaseFilepath               string `mapstructure:"database_filepath"`
-    GitHubToken                    string `mapstructure:"github_token"`
+    GitHubPrivateKeyPath           string `mapstructure:"github_private_key_path"`
     GitHubUsername                 string `mapstructure:"github_username"`
-    GithubEmail                    string `mapstructure:"github_email"`
+    GitHubEmail                    string `mapstructure:"github_email"`
     GoogleDriveCredentialsFilepath string `mapstructure:"google_drive_credentials_filepath"`
 }
 

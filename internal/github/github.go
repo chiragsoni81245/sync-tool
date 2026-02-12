@@ -69,16 +69,6 @@ func (p *Github) pushSync(target db.SyncTarget) error {
 		logger.Log.Error(target.StatusMessage)
 		db.Save(&target)
 
-        // If commit is not successful delete the remote
-        if err := deleteRemote(target.LocalPath, target.RemoteRef); err != nil {
-		    return nil
-        }
-		return nil
-	}
-
-	if err := deleteRemote(target.LocalPath, target.RemoteRef); err != nil {
-		logger.Log.Error(target.StatusMessage)
-		db.Save(&target)
 		return nil
 	}
 
@@ -89,11 +79,8 @@ func (p *Github) pushSync(target db.SyncTarget) error {
 }
 
 
-func buildAuthenticatedURL(repoURL string) string {
-    return strings.Replace(repoURL, "https://github.com/", 
-        fmt.Sprintf("https://%s:%s@github.com/", config.App.GitHubUsername, config.App.GitHubToken),
-        1,
-    )
+func buildSSHURL(repoURL string) string {
+    return strings.Replace(repoURL, "https://github.com/", "git@github.com:", 1)
 }
 
 func initGitRepo(path string) error {
@@ -111,7 +98,7 @@ func initGitRepo(path string) error {
 
 func configureGit(path string) error {
     commands := [][]string{
-        {"config", "user.email", config.App.GithubEmail},
+        {"config", "user.email", config.App.GitHubEmail},
         {"config", "user.name", config.App.GitHubUsername},
     }
     for _, args := range commands {
@@ -132,7 +119,7 @@ func setRemote(path, remoteURL string) error {
 	cmd.Dir = path
 	cmd.Run() // ignore error if no remote exists
 
-	cmd = exec.Command("git", "remote", "add", remoteName, buildAuthenticatedURL(remoteURL))
+	cmd = exec.Command("git", "remote", "add", remoteName, buildSSHURL(remoteURL))
 	cmd.Dir = path
 	if out, err := cmd.CombinedOutput(); err != nil {
 		return fmt.Errorf("git remote add failed: %v\n%s", err, out)
@@ -141,18 +128,14 @@ func setRemote(path, remoteURL string) error {
 	return nil
 }
 
-func deleteRemote(path, remoteURL string) error {
-    remoteName := "github-auto-sync"
-	cmd := exec.Command("git", "remote", "remove", remoteName)
-	cmd.Dir = path
-	cmd.Run() // ignore error if no remote exists
-
-	logger.Log.Infof("Deleted remote %s: %s", remoteName, remoteURL)
-	return nil
-}
-
 func commitAndPush(path string) error {
     remoteName := "github-auto-sync"
+
+	gitSSHCommand := fmt.Sprintf(
+		"ssh -i %s -o IdentitiesOnly=yes -o StrictHostKeyChecking=no",
+		config.App.GitHubPrivateKeyPath,
+	)
+
 	commands := [][]string{
 		{"add", "-A"},
 		{"commit", "-m", "\"Auto sync\""},
@@ -162,6 +145,11 @@ func commitAndPush(path string) error {
 	for _, args := range commands {
 		cmd := exec.Command("git", args...)
 		cmd.Dir = path
+		// inherit existing env
+		cmd.Env = append(os.Environ(),
+			"GIT_SSH_COMMAND="+gitSSHCommand,
+		)
+		
 		if out, err := cmd.CombinedOutput(); err != nil {
 			// If commit fails because nothing changed, skip it
 			if args[0] == "commit" && strings.Contains(string(out), "nothing to commit") {
